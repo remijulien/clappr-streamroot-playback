@@ -1,0 +1,116 @@
+machine:
+    node:
+        version: 6.2.0
+    ruby:
+        version: 2.2.0
+
+dependencies:
+    pre:
+        - gem install aws-sdk
+
+        # Clone tool
+        - git config --global user.email $STREAMROOT_EMAIL
+        - git config --global user.name $STREAMROOT_USERNAME
+        - git clone git@github.com:streamroot/toolkit.git
+
+        # Set peer-agent version
+        - toolkit/set_dependency_version.rb --exclude_branches master
+                                            --dependency_path dependencies.hlsjs-wrapper
+                                            --version beta
+        - npm prune
+    override:
+        - npm install
+    post:
+        - npm ls --depth=0 > $CIRCLE_ARTIFACTS/package.lock
+
+test:
+    override:
+        - npm test
+        - npm run lint
+
+deployment:
+    features:
+        branch: /^(?!(?:dev|master)$).+$/
+        commands:
+            # Generate dist
+            - browserify -t babelify -p browserify-derequire -- index.js | uglifyjs > dist/clappr0-hlsjs-provider.js
+            - toolkit/add_banner.rb --file dist/$DIST_FILE --deploy_env $CIRCLE_BRANCH
+
+            # Upload dist
+            - cp dist/$DIST_FILE $CIRCLE_ARTIFACTS/$DIST_FILE
+            - toolkit/upload_to_s3.rb --bucket $S3_FEATURES_BUCKET
+                                      --region eu-west-1
+                                      --file $CIRCLE_ARTIFACTS/$DIST_FILE
+                                      --destinations $CIRCLE_PROJECT_REPONAME/$CIRCLE_BRANCH/$DIST_FILE
+                                      --key $S3_KEY
+                                      --secret $S3_SECRET
+
+    staging:
+        branch: dev
+        commands:
+            # Cleanup
+            - rm -rf dist
+
+            # Generate dist
+            - browserify -t babelify -p browserify-derequire -- index.js | uglifyjs > dist/clappr0-hlsjs-provider.js
+            - toolkit/add_banner.rb --file dist/$DIST_FILE
+                                    --deploy_env staging
+                                    --version $(toolkit/current_version.rb --beta ${CIRCLE_BUILD_NUM})
+            - cp dist/$DIST_FILE $CIRCLE_ARTIFACTS/$DIST_FILE
+
+            # Upload version
+            - toolkit/upload_to_s3.rb --bucket $S3_STAGING_BUCKET
+                                      --region eu-west-1
+                                      --file $CIRCLE_ARTIFACTS/$DIST_FILE
+                                      --destinations $CIRCLE_PROJECT_REPONAME/$(toolkit/current_version.rb --beta ${CIRCLE_BUILD_NUM})/$DIST_FILE
+                                                     $CIRCLE_PROJECT_REPONAME/latest/$DIST_FILE
+                                      --key $S3_KEY
+                                      --secret $S3_SECRET
+
+            # Changelog
+            - toolkit/post_changelog.rb   --project $CIRCLE_PROJECT_REPONAME
+                                          --env staging
+                                          --subtitle $POST_SUBTITLE
+                                          --channel $SLACK_SUBTITLE
+                                          --slack-token $SLACK_TOKEN
+                                          --username $POST_USERNAME
+                                          --icon-url $POST_PICTURE
+
+    preprod:
+        branch: master
+        commands:
+            # Update version
+            - toolkit/update_version.rb
+
+            # Changelog
+            - toolkit/bump_current_changelog.rb --version $(toolkit/current_version.rb)
+
+            # Cleanup
+            - rm -rf dist
+
+            # Generate dist
+            - browserify -t babelify -p browserify-derequire -- index.js | uglifyjs > dist/clappr0-hlsjs-provider.js
+            - toolkit/add_banner.rb --file dist/bundle/$DIST_FILE
+                                    --version $(toolkit/current_version.rb --beta ${CIRCLE_BUILD_NUM})
+            - cp dist/$DIST_FILE $CIRCLE_ARTIFACTS/$DIST_FILE
+
+            # Upload version
+            - toolkit/upload_to_s3.rb --bucket $S3_PREPROD_BUCKET
+                                      --region eu-west-1
+                                      --file $CIRCLE_ARTIFACTS/$DIST_FILE
+                                      --destinations $CIRCLE_PROJECT_REPONAME/$(toolkit/current_version.rb --major)/$DIST_FILE
+                                                     $CIRCLE_PROJECT_REPONAME/$(toolkit/current_version.rb --no_patch)/$DIST_FILE
+                                                     $CIRCLE_PROJECT_REPONAME/$(toolkit/current_version.rb)/$DIST_FILE
+                                                     $CIRCLE_PROJECT_REPONAME/latest/$DIST_FILE
+                                      --key $S3_KEY
+                                      --secret $S3_SECRET
+
+            # Changelog
+            - toolkit/post_changelog.rb   --project $CIRCLE_PROJECT_REPONAME
+                                          --env preprod
+                                          --subtitle $POST_SUBTITLE
+                                          --channel $SLACK_SUBTITLE
+                                          --slack-token $SLACK_TOKEN
+                                          --username $POST_USERNAME
+                                          --icon-url $POST_PICTURE
+
