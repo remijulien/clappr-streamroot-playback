@@ -33,7 +33,7 @@ deployment:
         branch: /^(?!(?:dev|master)$).+$/
         commands:
             # Generate dist
-            - browserify -t babelify -p browserify-derequire -- index.js | uglifyjs > dist/clappr0-hlsjs-provider.js
+            - browserify provider.js | uglifyjs > dist/clappr0-hlsjs-provider.js
             - toolkit/add_banner.rb --file dist/$DIST_FILE --deploy_env $CIRCLE_BRANCH
 
             # Upload dist
@@ -52,7 +52,7 @@ deployment:
             - rm -rf dist
 
             # Generate dist
-            - browserify -t babelify -p browserify-derequire -- index.js | uglifyjs > dist/clappr0-hlsjs-provider.js
+            - browserify provider.js | uglifyjs > dist/clappr0-hlsjs-provider.js
             - toolkit/add_banner.rb --file dist/$DIST_FILE
                                     --deploy_env staging
                                     --version $(toolkit/current_version.rb --beta ${CIRCLE_BUILD_NUM})
@@ -89,7 +89,7 @@ deployment:
             - rm -rf dist
 
             # Generate dist
-            - browserify -t babelify -p browserify-derequire -- index.js | uglifyjs > dist/clappr0-hlsjs-provider.js
+            - browserify provider.js | uglifyjs > dist/clappr0-hlsjs-provider.js
             - toolkit/add_banner.rb --file dist/bundle/$DIST_FILE
                                     --version $(toolkit/current_version.rb --beta ${CIRCLE_BUILD_NUM})
             - cp dist/$DIST_FILE $CIRCLE_ARTIFACTS/$DIST_FILE
