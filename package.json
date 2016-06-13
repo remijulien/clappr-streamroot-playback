@@ -8,10 +8,7 @@
     "url": "git@github.com:clappr/dash-shaka-playback.git"
   },
   "scripts": {
-    "build-watch": "node_modules/.bin/webpack --watch",
-    "build-demo": "node_modules/.bin/webpack",
-    "start": "http-server",
-    "build-release": "node_modules/.bin/webpack -p"
+    "start": "http-server"
   },
   "author": "Flávio Ribeiro <email@flavioribeiro.com>",
   "license": "Apache 2.0 License",
@@ -21,7 +18,6 @@
   "devDependencies": {
     "http-server": "^0.9.0",
     "babel-core": "^5.8.25",
-    "babel-loader": "^5.3.2",
-    "webpack": "^1.12.1"
+    "babel-loader": "^5.3.2"
   }
 }
