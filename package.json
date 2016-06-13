@@ -8,7 +8,7 @@
     "url": "git@github.com:streamroot/clappr0-hlsjs-provider.git"
   },
   "scripts": {
-    "build": "browserify provider.js | uglifyjs > dist/clappr0-hlsjs-provider.js",
+    "build": "mkdir -p dist && browserify provider.js | uglifyjs > dist/clappr0-hlsjs-provider.js",
     "lint": "eslint provider.js"
   },
   "author": {
