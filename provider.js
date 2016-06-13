@@ -1,4 +1,5 @@
 import { HLS } from 'clappr';
+import Hls from 'hlsjs-p2p-bundle';
 
 class StreamrootHlsjs extends HLS {
     get name() {
@@ -6,7 +7,7 @@ class StreamrootHlsjs extends HLS {
     }
 
     _setupHls() {
-        this._hls = new window.Hls(this._options.hlsjsConfig || {}, this._options.p2pConfig);
+        this._hls = new Hls(this._options.hlsjsConfig || {}, this._options.p2pConfig);
         this._hls.on(Hls.Events.MEDIA_ATTACHED, () => {
             this._hls.loadSource(this._options.src);
         });
