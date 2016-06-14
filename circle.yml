@@ -15,7 +15,7 @@ dependencies:
 
         # Set hlsjs-p2p-bundle version
         - toolkit/set_dependency_version.rb --exclude_branches master
-                                            --dependency_path dependencies.hlsjs-p2p-bundle
+                                            --dependency_path dependencies.streamroot-hlsjs-p2p-bundle
                                             --version beta
         - npm prune
     override:
