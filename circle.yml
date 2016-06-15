@@ -91,7 +91,7 @@ deployment:
             # Generate dist
             - npm run build
             - toolkit/add_banner.rb --file dist/$DIST_FILE
-                                    --version $(toolkit/current_version.rb --beta ${CIRCLE_BUILD_NUM})
+                                    --version $(toolkit/current_version.rb)
             - cp dist/$DIST_FILE $CIRCLE_ARTIFACTS/$DIST_FILE
 
             # Upload version
