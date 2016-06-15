@@ -34,7 +34,9 @@ deployment:
         commands:
             # Generate dist
             - npm run build
-            - toolkit/add_banner.rb --file dist/$DIST_FILE --deploy_env $CIRCLE_BRANCH
+            - toolkit/add_banner.rb --file dist/$DIST_FILE
+                                    --deploy_env $CIRCLE_BRANCH
+                                    --dependencies streamroot-hlsjs-p2p-bundle
 
             # Upload dist
             - cp dist/$DIST_FILE $CIRCLE_ARTIFACTS/$DIST_FILE
@@ -56,6 +58,7 @@ deployment:
             - toolkit/add_banner.rb --file dist/$DIST_FILE
                                     --deploy_env staging
                                     --version $(toolkit/current_version.rb --beta ${CIRCLE_BUILD_NUM})
+                                    --dependencies streamroot-hlsjs-p2p-bundle
             - cp dist/$DIST_FILE $CIRCLE_ARTIFACTS/$DIST_FILE
 
             # Upload version
@@ -92,6 +95,7 @@ deployment:
             - npm run build
             - toolkit/add_banner.rb --file dist/$DIST_FILE
                                     --version $(toolkit/current_version.rb)
+                                    --dependencies streamroot-hlsjs-p2p-bundle
             - cp dist/$DIST_FILE $CIRCLE_ARTIFACTS/$DIST_FILE
 
             # Upload version
