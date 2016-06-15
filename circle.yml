@@ -15,7 +15,7 @@ dependencies:
 
         # Set hlsjs-p2p-bundle version
         - toolkit/set_dependency_version.rb --exclude_branches master
-                                            --dependency_path dependencies.hlsjs-p2p-bundle
+                                            --dependency_path dependencies.streamroot-hlsjs-p2p-bundle
                                             --version beta
         - npm prune
     override:
@@ -90,7 +90,7 @@ deployment:
 
             # Generate dist
             - npm run build
-            - toolkit/add_banner.rb --file dist/bundle/$DIST_FILE
+            - toolkit/add_banner.rb --file dist/$DIST_FILE
                                     --version $(toolkit/current_version.rb --beta ${CIRCLE_BUILD_NUM})
             - cp dist/$DIST_FILE $CIRCLE_ARTIFACTS/$DIST_FILE
 
