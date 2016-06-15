@@ -1,5 +1,5 @@
 import { HLS } from 'clappr';
-import Hls from 'hlsjs-p2p-bundle';
+import Hls from 'streamroot-hlsjs-p2p-bundle';
 
 class StreamrootHlsjs extends HLS {
     get name() {

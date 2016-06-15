@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Dev]
 
 ## [Unreleased]
+### Fixed
+- hlsjs-p2p-bundle dependency call
 
 ## [1.0.2] - 2016-06-15
 ### Added
