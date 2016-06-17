@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ## [1.0.4] - 2016-06-15
+### Fixed
 - Fix version display in banner
 
 ## [1.0.3] - 2016-06-15
